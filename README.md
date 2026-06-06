@@ -45,6 +45,26 @@ plotpipe render --script ./scripts/sample-story.json --skip-voiceover
 
 Stage outputs are cached under `tmp/<story-id>/`. Use `--no-cache` on any command to regenerate existing outputs.
 
+## PlotTeaFiles Studio
+
+The Phase 3 Studio is a Next.js web app for pasting scripts, submitting render jobs, tracking progress, and downloading MP4s.
+
+```bash
+npm run web:dev
+```
+
+Open `http://localhost:3000`.
+
+Runner modes:
+
+```bash
+STUDIO_RUNNER_MODE=mock    # UI/job flow only, no real render
+STUDIO_RUNNER_MODE=local   # runs the local PlotPipe CLI from the API route
+STUDIO_RUNNER_MODE=remote  # sends jobs to RENDER_WORKER_URL
+```
+
+For Vercel, use `mock` or `remote`. Do not run heavy Remotion renders inside a normal Vercel request. Keep private keys in Vercel environment variables and never expose them with `NEXT_PUBLIC_`.
+
 ## B-Roll
 
 Place local B-roll in `assets/broll/`. The compose stage matches each segment's `broll_keyword` against image or video filenames and copies matched assets into `public/plotpipe/<story-id>/` so Remotion can render them with `staticFile()`.
