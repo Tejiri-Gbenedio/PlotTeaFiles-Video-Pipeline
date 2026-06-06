@@ -1,0 +1,38 @@
+{
+  "id": "sample-tornado-survivor",
+  "title": "The Closet That Saved Her Life",
+  "hook": "She heard the tornado before the sirens ever started.",
+  "segments": [
+    {
+      "narration": "At 9:17 p.m., Maya was washing dishes when the kitchen window started breathing in and out like it was alive. The power snapped off, and every phone in the house screamed at once.",
+      "broll_keyword": "storm clouds tornado warning",
+      "broll_queries": ["dark storm clouds", "lightning sky", "rainy window"],
+      "effect": "ken_burns"
+    },
+    {
+      "narration": "Her husband was still driving home, so Maya grabbed their six-year-old and ran to the hallway closet. She pulled coats over their heads and held the doorknob shut with both hands.",
+      "broll_keyword": "family hallway closet",
+      "broll_queries": ["dark hallway", "woman holding child", "hiding in closet"],
+      "effect": "zoom_in"
+    },
+    {
+      "narration": "Then the roof lifted. Not cracked, not shook, lifted. The whole house roared like a freight train had parked inside the walls.",
+      "broll_keyword": "house tornado damage",
+      "broll_queries": ["damaged house", "storm damage", "broken roof"],
+      "effect": "camera_shake"
+    },
+    {
+      "narration": "For thirty seconds, she could not tell if they were on the floor or floating. Her daughter kept whispering the alphabet, because Maya told her letters could keep time.",
+      "broll_keyword": "child shelter storm",
+      "broll_queries": ["scared child indoors", "child hiding room", "storm shelter"],
+      "effect": "ken_burns"
+    },
+    {
+      "narration": "When it went quiet, the closet was the only room still standing. The rest of the house was scattered across the street, but both of them walked out without a scratch.",
+      "broll_keyword": "tornado aftermath survivor",
+      "broll_queries": ["storm aftermath", "woman survivor", "damaged neighborhood"],
+      "effect": "zoom_in"
+    }
+  ],
+  "outro": "Follow PlotTeaFiles for true stories where one tiny decision changed everything."
+}
