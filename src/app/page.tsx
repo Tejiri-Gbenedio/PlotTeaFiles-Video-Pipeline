@@ -1,9 +1,10 @@
 'use client';
 
 import {useEffect, useMemo, useState} from 'react';
-import {Download, FileJson, Film, Play, RefreshCw, Sparkles} from 'lucide-react';
+import {Code2, Download, FileText, Film, Play, RefreshCw, Sparkles, Wand2} from 'lucide-react';
 
 type JobStatus = 'queued' | 'running' | 'done' | 'failed';
+type InputMode = 'plain' | 'json';
 
 interface StudioJob {
   id: string;
@@ -16,7 +17,7 @@ interface StudioJob {
   error?: string;
 }
 
-const sampleScript = {
+const sampleStory = {
   id: 'closet-that-saved-her-life',
   title: 'The Closet That Saved Her Life',
   hook: 'She thought the closet was too small to save them.',
@@ -55,6 +56,15 @@ const sampleScript = {
   outro: 'Sometimes survival is not loud. Sometimes it is one small door that holds.'
 };
 
+const samplePlainScript = [
+  'Maya was washing dishes when the tornado siren started screaming across the neighborhood.',
+  'At first, she thought it was another false alarm, but then she looked outside and saw the sky turning an impossible shade of green.',
+  'Her husband was still driving home from work, so she grabbed their six-year-old daughter and ran toward the hallway closet.',
+  'They barely got the door shut before every window in the house exploded inward.',
+  'The roof began to peel away above them like paper. Maya pulled winter coats over their heads and told her daughter to sing anything she remembered from school.',
+  'When the wind finally stopped, the hallway was gone. But the tiny closet was still standing.'
+].join('\n\n');
+
 function statusLabel(status: JobStatus): string {
   if (status === 'queued') return 'Queued';
   if (status === 'running') return 'Rendering';
@@ -63,16 +73,25 @@ function statusLabel(status: JobStatus): string {
 }
 
 export default function StudioPage() {
-  const [script, setScript] = useState(() => JSON.stringify(sampleScript, null, 2));
+  const [mode, setMode] = useState<InputMode>('plain');
+  const [plainScript, setPlainScript] = useState(samplePlainScript);
+  const [title, setTitle] = useState('The Closet That Saved Her Life');
+  const [targetSegments, setTargetSegments] = useState(5);
+  const [tone, setTone] = useState('cinematic suspenseful');
+  const [jsonScript, setJsonScript] = useState(() => JSON.stringify(sampleStory, null, 2));
   const [provider, setProvider] = useState('openai');
   const [quality, setQuality] = useState('low');
   const [shots, setShots] = useState(3);
   const [jobs, setJobs] = useState<StudioJob[]>([]);
   const [busy, setBusy] = useState(false);
+  const [converting, setConverting] = useState(false);
   const [error, setError] = useState<string | undefined>();
 
   const latestJob = jobs[0];
-  const canSubmit = useMemo(() => script.trim().length > 0 && !busy, [busy, script]);
+  const canSubmit = useMemo(() => {
+    if (busy || converting) return false;
+    return mode === 'plain' ? plainScript.trim().length > 40 : jsonScript.trim().length > 0;
+  }, [busy, converting, jsonScript, mode, plainScript]);
 
   async function loadJobs() {
     const response = await fetch('/api/jobs', {cache: 'no-store'});
@@ -89,17 +108,48 @@ export default function StudioPage() {
     return () => window.clearInterval(timer);
   }, []);
 
+  async function convertPlainScript() {
+    setConverting(true);
+    setError(undefined);
+
+    try {
+      const response = await fetch('/api/scripts/convert', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          plainScript,
+          title: title.trim() || undefined,
+          targetSegments,
+          tone: tone.trim() || undefined
+        })
+      });
+      const data = (await response.json()) as {story?: unknown; error?: string};
+
+      if (!response.ok || !data.story) {
+        throw new Error(data.error ?? 'Failed to convert plain script');
+      }
+
+      setJsonScript(JSON.stringify(data.story, null, 2));
+      return data.story;
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+      throw caught;
+    } finally {
+      setConverting(false);
+    }
+  }
+
   async function submitJob() {
     setBusy(true);
     setError(undefined);
 
     try {
-      const parsed = JSON.parse(script) as unknown;
+      const story = mode === 'plain' ? await convertPlainScript() : (JSON.parse(jsonScript) as unknown);
       const response = await fetch('/api/jobs', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          script: parsed,
+          script: story,
           options: {
             provider,
             imageQuality: quality,
@@ -131,7 +181,7 @@ export default function StudioPage() {
           </div>
           <div className="status-pill">
             <Sparkles size={16} />
-            Phase 3 Studio MVP
+            Plain Script Mode
           </div>
         </header>
 
@@ -139,8 +189,16 @@ export default function StudioPage() {
           <div className="panel">
             <div className="panel-header">
               <div className="panel-title">
-                <FileJson size={18} />
-                Story Script
+                {mode === 'plain' ? <FileText size={18} /> : <Code2 size={18} />}
+                Script Input
+              </div>
+              <div className="tabs">
+                <button className={mode === 'plain' ? 'tab active' : 'tab'} onClick={() => setMode('plain')}>
+                  Plain Script
+                </button>
+                <button className={mode === 'json' ? 'tab active' : 'tab'} onClick={() => setMode('json')}>
+                  Advanced JSON
+                </button>
               </div>
             </div>
             <div className="panel-body">
@@ -172,21 +230,68 @@ export default function StudioPage() {
                   />
                 </div>
                 <div className="field">
-                  <label>Output Mode</label>
-                  <input className="input" disabled value="MP4 render job" />
+                  <label>Target Segments</label>
+                  <input
+                    className="input"
+                    disabled={mode === 'json'}
+                    min={3}
+                    max={8}
+                    type="number"
+                    value={targetSegments}
+                    onChange={(event) => setTargetSegments(Number(event.target.value))}
+                  />
                 </div>
-                <div className="field full">
-                  <label>Script JSON</label>
-                  <textarea className="textarea" value={script} onChange={(event) => setScript(event.target.value)} />
-                </div>
+
+                {mode === 'plain' ? (
+                  <>
+                    <div className="field">
+                      <label>Optional Title</label>
+                      <input className="input" value={title} onChange={(event) => setTitle(event.target.value)} />
+                    </div>
+                    <div className="field">
+                      <label>Tone</label>
+                      <input className="input" value={tone} onChange={(event) => setTone(event.target.value)} />
+                    </div>
+                    <div className="field full">
+                      <label>Paste Normal Story Script</label>
+                      <textarea
+                        className="textarea plain"
+                        value={plainScript}
+                        onChange={(event) => setPlainScript(event.target.value)}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <div className="field full">
+                    <label>Internal StoryScript JSON</label>
+                    <textarea
+                      className="textarea"
+                      value={jsonScript}
+                      onChange={(event) => setJsonScript(event.target.value)}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="actions">
+                {mode === 'plain' ? (
+                  <button className="button secondary" disabled={converting || busy} onClick={() => convertPlainScript()}>
+                    <Wand2 size={18} />
+                    {converting ? 'Converting...' : 'Convert Only'}
+                  </button>
+                ) : null}
                 <button className="button primary" disabled={!canSubmit} onClick={submitJob}>
                   <Play size={18} />
-                  Generate Video
+                  {mode === 'plain' ? 'Generate From Script' : 'Generate From JSON'}
                 </button>
-                <button className="button secondary" onClick={() => setScript(JSON.stringify(sampleScript, null, 2))}>
+                <button
+                  className="button secondary"
+                  onClick={() => {
+                    setPlainScript(samplePlainScript);
+                    setTitle(sampleStory.title);
+                    setJsonScript(JSON.stringify(sampleStory, null, 2));
+                  }}
+                >
                   <RefreshCw size={17} />
                   Reset Sample
                 </button>
@@ -194,8 +299,8 @@ export default function StudioPage() {
 
               {error ? <div className="error">{error}</div> : null}
               <p className="note">
-                Hosted mode stores secrets in server-side environment variables only. Local mode can reuse the CLI
-                pipeline already built in this repo.
+                Plain Script Mode converts your pasted story into the internal video format automatically. Advanced JSON
+                is still available when you want exact scene control.
               </p>
             </div>
           </div>
