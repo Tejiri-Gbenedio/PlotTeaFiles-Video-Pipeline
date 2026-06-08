@@ -6,7 +6,7 @@ import {logger} from '../utils/logger.js';
 import {HttpRequestError, withRetry} from '../utils/retry.js';
 import {StoryScript} from './parse.js';
 
-export type ImageGenProvider = 'gemini' | 'openai';
+export type ImageGenProvider = 'openai' | 'flux';
 export type ImageQuality = 'low' | 'medium' | 'high';
 
 export interface ImageGenOptions {
@@ -59,7 +59,10 @@ interface OpenAiImageResponse {
 
 const GEMINI_RATE_LIMIT_DELAY_MS = 7_000;
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash-image';
-const DEFAULT_OPENAI_IMAGE_MODEL = 'gpt-image-1-mini';
+const DEFAULT_OPENAI_IMAGE_MODEL = 'gpt-image-2';
+const DEFAULT_FAL_MODEL = 'fal-ai/flux-pro';
+const FAL_POLL_INTERVAL_MS = 1_500;
+const FAL_POLL_TIMEOUT_MS = 120_000;
 
 let lastGeminiCallAt = 0;
 
@@ -248,7 +251,7 @@ async function generateWithOpenAI(prompt: string, outputPath: string, options: I
   }
 
   const model = options.openAiModel ?? process.env.OPENAI_IMAGE_MODEL ?? DEFAULT_OPENAI_IMAGE_MODEL;
-  const quality = options.quality ?? 'low';
+  const quality = options.quality ?? 'high';
 
   await withRetry(`OpenAI image generation (${model})`, async () => {
     const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -295,27 +298,112 @@ async function generateWithOpenAI(prompt: string, outputPath: string, options: I
   return model;
 }
 
+interface FalQueueResponse {
+  request_id: string;
+  status_url: string;
+}
+
+interface FalStatusResponse {
+  status: 'IN_QUEUE' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+  output?: {
+    images?: Array<{url: string}>;
+  };
+  error?: string;
+}
+
+async function generateWithFlux(prompt: string, outputPath: string): Promise<string> {
+  const apiKey = process.env.FAL_KEY;
+
+  if (!apiKey) {
+    throw new Error('Missing FAL_KEY for FLUX image generation');
+  }
+
+  const model = DEFAULT_FAL_MODEL;
+
+  await withRetry(`FLUX image generation (${model})`, async () => {
+    const submitResponse = await fetch(`https://queue.fal.run/${model}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Key ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt,
+        image_size: {width: 768, height: 1366},
+        num_images: 1,
+        output_format: 'png',
+        safety_tolerance: '5'
+      })
+    });
+
+    if (!submitResponse.ok) {
+      const body = await submitResponse.text();
+      throw new HttpRequestError(
+        `fal.ai queue submit returned ${submitResponse.status}`,
+        submitResponse.status,
+        body
+      );
+    }
+
+    const queue = (await submitResponse.json()) as FalQueueResponse;
+    const deadline = Date.now() + FAL_POLL_TIMEOUT_MS;
+
+    while (Date.now() < deadline) {
+      await delay(FAL_POLL_INTERVAL_MS);
+
+      const statusResponse = await fetch(queue.status_url, {
+        headers: {Authorization: `Key ${apiKey}`}
+      });
+
+      if (!statusResponse.ok) {
+        continue;
+      }
+
+      const status = (await statusResponse.json()) as FalStatusResponse;
+
+      if (status.status === 'COMPLETED') {
+        const imageUrl = status.output?.images?.[0]?.url;
+
+        if (!imageUrl) {
+          throw new Error('fal.ai FLUX returned COMPLETED but no image URL');
+        }
+
+        await downloadImage(imageUrl, outputPath);
+        return;
+      }
+
+      if (status.status === 'FAILED') {
+        throw new Error(`fal.ai FLUX generation failed: ${status.error ?? 'unknown error'}`);
+      }
+    }
+
+    throw new Error('fal.ai FLUX generation timed out after 120s');
+  });
+
+  return model;
+}
+
 async function generateImage(
   prompt: string,
   outputPath: string,
   options: ImageGenOptions
 ): Promise<{provider: ImageGenProvider; model: string}> {
-  const provider = options.provider ?? 'gemini';
+  const provider = options.provider ?? 'openai';
 
-  if (provider === 'openai' || !process.env.GEMINI_API_KEY) {
-    const model = await generateWithOpenAI(prompt, outputPath, options);
-    return {provider: 'openai', model};
+  if (provider === 'flux') {
+    try {
+      const model = await generateWithFlux(prompt, outputPath);
+      return {provider: 'flux', model};
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger.warn(`FLUX failed, falling back to OpenAI: ${message}`);
+      const model = await generateWithOpenAI(prompt, outputPath, options);
+      return {provider: 'openai', model};
+    }
   }
 
-  try {
-    const model = await generateWithGemini(prompt, outputPath, options);
-    return {provider: 'gemini', model};
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    logger.warn(`Gemini failed, falling back to OpenAI: ${message}`);
-    const model = await generateWithOpenAI(prompt, outputPath, options);
-    return {provider: 'openai', model};
-  }
+  const model = await generateWithOpenAI(prompt, outputPath, options);
+  return {provider: 'openai', model};
 }
 
 export async function generateSegmentImage(
@@ -335,11 +423,8 @@ export async function generateSegmentImage(
     logger.stage('imagegen', `Using cached image: ${outputPath}`);
     return {
       filePath: outputPath,
-      provider: options.provider ?? 'gemini',
-      model:
-        options.provider === 'openai'
-          ? options.openAiModel ?? process.env.OPENAI_IMAGE_MODEL ?? DEFAULT_OPENAI_IMAGE_MODEL
-          : options.geminiModel ?? process.env.GEMINI_IMAGE_MODEL ?? DEFAULT_GEMINI_MODEL,
+      provider: options.provider ?? 'openai',
+      model: options.openAiModel ?? process.env.OPENAI_IMAGE_MODEL ?? DEFAULT_OPENAI_IMAGE_MODEL,
       prompt,
       role: shotRole,
       shotIndex
@@ -350,7 +435,7 @@ export async function generateSegmentImage(
   await fs.writeFile(segmentPromptPath(options.cacheDir, segmentIndex, shotIndex), prompt, 'utf8');
   logger.stage(
     'imagegen',
-    `Generating segment ${segmentIndex + 1} shot ${shotIndex + 1}/${shotCount} with ${options.provider ?? 'gemini'}`
+    `Generating segment ${segmentIndex + 1} shot ${shotIndex + 1}/${shotCount} with ${options.provider ?? 'openai'}`
   );
 
   const generated = await generateImage(prompt, outputPath, options);

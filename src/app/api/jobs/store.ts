@@ -5,13 +5,14 @@ import {spawn} from 'node:child_process';
 import {StudioStoryScriptSchema} from './schema';
 
 export type StudioJobStatus = 'queued' | 'running' | 'done' | 'failed';
-export type StudioImageProvider = 'gemini' | 'openai';
+export type StudioImageProvider = 'openai';
 export type StudioImageQuality = 'low' | 'medium' | 'high';
 
 export interface CreateJobInput {
   script: unknown;
   options?: {
     provider?: StudioImageProvider;
+    imageModel?: string;
     imageQuality?: StudioImageQuality;
     shotsPerSegment?: number;
   };
@@ -25,6 +26,7 @@ export interface StudioJob {
   stage: string;
   progress: number;
   createdAt: string;
+  startedAt?: string;
   outputUrl?: string;
   error?: string;
 }
@@ -124,7 +126,7 @@ async function runLocalJob(
   await fs.mkdir(path.dirname(outputPath), {recursive: true});
   await fs.writeFile(scriptPath, JSON.stringify(story, null, 2), 'utf8');
 
-  updateJob(jobId, {status: 'running', stage: 'Starting local PlotPipe render', progress: 10});
+  updateJob(jobId, {status: 'running', stage: 'Starting local PlotPipe render', progress: 10, startedAt: new Date().toISOString()});
 
   const args = [
     'tsx',
@@ -136,6 +138,8 @@ async function runLocalJob(
     outputPath,
     '--provider',
     options.provider ?? 'openai',
+    '--image-model',
+    options.imageModel ?? 'gpt-image-2',
     '--image-quality',
     options.imageQuality ?? 'low',
     '--shots-per-segment',
@@ -150,6 +154,7 @@ async function runLocalJob(
 
     child.stdout.on('data', (chunk: Buffer) => {
       const text = chunk.toString();
+      process.stdout.write(`[job:${jobId.slice(0, 8)}] ${text}`);
       if (text.includes('[voiceover]')) updateJob(jobId, {stage: 'Generating voiceover', progress: 22});
       if (text.includes('[subtitles]')) updateJob(jobId, {stage: 'Generating captions', progress: 38});
       if (text.includes('[imagegen]')) updateJob(jobId, {stage: 'Generating cinematic images', progress: 58});
@@ -158,6 +163,7 @@ async function runLocalJob(
 
     child.stderr.on('data', (chunk: Buffer) => {
       const text = chunk.toString();
+      process.stderr.write(`[job:${jobId.slice(0, 8)}] ${text}`);
       if (text.includes('failed')) {
         updateJob(jobId, {stage: text.slice(0, 140), progress: 70});
       }

@@ -23,8 +23,9 @@ export const Captions: React.FC<CaptionsProps> = ({words}) => {
     return null;
   }
 
-  const phraseStart = Math.max(0, activeIndex - 3);
-  const phraseEnd = Math.min(words.length, activeIndex + 4);
+  // Show 2 words before + active + 2 words after (5 max) — matches channel style
+  const phraseStart = Math.max(0, activeIndex - 2);
+  const phraseEnd = Math.min(words.length, activeIndex + 3);
   const phrase = words.slice(phraseStart, phraseEnd);
 
   return (
@@ -32,7 +33,7 @@ export const Captions: React.FC<CaptionsProps> = ({words}) => {
       style={{
         justifyContent: 'flex-end',
         alignItems: 'center',
-        padding: '0 70px 250px',
+        padding: '0 56px 220px',
         pointerEvents: 'none'
       }}
     >
@@ -40,9 +41,9 @@ export const Captions: React.FC<CaptionsProps> = ({words}) => {
         style={{
           display: 'flex',
           flexWrap: 'wrap',
-          gap: '12px 18px',
+          gap: '8px 14px',
           justifyContent: 'center',
-          maxWidth: 940,
+          maxWidth: 970,
           textAlign: 'center'
         }}
       >
@@ -54,18 +55,19 @@ export const Captions: React.FC<CaptionsProps> = ({words}) => {
             <span
               key={`${word.text}-${word.startFrame}-${index}`}
               style={{
-                color: active ? '#ffd84d' : 'white',
+                backgroundColor: active ? '#7C3AED' : 'transparent',
+                borderRadius: 10,
+                color: 'white',
                 display: 'inline-block',
                 fontFamily: 'Impact, Haettenschweiler, Arial Black, sans-serif',
-                fontSize: 68,
+                fontSize: 74,
                 fontWeight: 900,
-                letterSpacing: 0,
-                lineHeight: 0.95,
+                letterSpacing: 2,
+                lineHeight: 1.05,
+                padding: active ? '4px 20px' : '4px 6px',
                 textTransform: 'uppercase',
-                transform: active ? 'scale(1.13)' : 'scale(1)',
-                transformOrigin: 'center',
-                WebkitTextStroke: '5px black',
-                textShadow: '0 8px 20px rgba(0,0,0,0.75)'
+                WebkitTextStroke: active ? '0px transparent' : '4px black',
+                textShadow: active ? 'none' : '0 6px 18px rgba(0,0,0,0.85)'
               }}
             >
               {word.text}

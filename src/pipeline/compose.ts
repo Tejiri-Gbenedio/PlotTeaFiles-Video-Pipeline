@@ -23,6 +23,7 @@ export interface ComposeOptions {
   propsPath?: string;
   useImageGen?: boolean;
   imageProvider?: ImageGenProvider;
+  imageModel?: string;
   imageQuality?: ImageQuality;
   shotsPerSegment?: number;
 }
@@ -257,7 +258,8 @@ export async function composeRemotionProps(
       const generatedImages = await generateSegmentImages(story, segment, index, {
         cacheDir: generatedCacheDir,
         cache: useCache,
-        provider: options.imageProvider ?? 'gemini',
+        provider: options.imageProvider ?? 'openai',
+        openAiModel: options.imageModel,
         quality: options.imageQuality ?? 'low',
         shotCount: options.shotsPerSegment ?? 3
       });

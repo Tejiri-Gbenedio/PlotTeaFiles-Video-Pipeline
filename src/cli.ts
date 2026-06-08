@@ -16,6 +16,7 @@ interface CommonOptions {
   tmpDir: string;
   brollDir: string;
   provider: ImageGenProvider;
+  imageModel: string;
   imageQuality: ImageQuality;
   shotsPerSegment: number;
   imagegen?: boolean;
@@ -44,11 +45,11 @@ function parsePositiveInt(value: string): number {
 }
 
 function parseImageProvider(value: string): ImageGenProvider {
-  if (value === 'gemini' || value === 'openai') {
+  if (value === 'openai') {
     return value;
   }
 
-  throw new InvalidArgumentError('Expected one of: gemini, openai');
+  throw new InvalidArgumentError('Expected: openai');
 }
 
 function parseImageQuality(value: string): ImageQuality {
@@ -96,9 +97,7 @@ function requireImageEnv(options: CommonOptions): void {
     return;
   }
 
-  if (!process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
-    throw new Error('Image generation requires GEMINI_API_KEY or OPENAI_API_KEY for fallback');
-  }
+  requireEnv(['OPENAI_API_KEY'], 'Image generation');
 }
 
 async function runCommand(label: string, fn: () => Promise<void>): Promise<void> {
@@ -117,7 +116,8 @@ function addCommonOptions(command: Command): Command {
     .option('--fps <number>', 'Composition frames per second', parsePositiveInt, 30)
     .option('--width <number>', 'Composition width', parsePositiveInt, 1080)
     .option('--height <number>', 'Composition height', parsePositiveInt, 1920)
-    .option('--provider <provider>', 'Image generation provider: gemini or openai', parseImageProvider, 'gemini')
+    .option('--provider <provider>', 'Image generation provider', parseImageProvider, 'openai')
+    .option('--image-model <model>', 'OpenAI image model', 'gpt-image-2')
     .option('--image-quality <quality>', 'OpenAI image quality: low, medium, or high', parseImageQuality, 'low')
     .option('--shots-per-segment <number>', 'Generated B-roll images per story segment', parsePositiveInt, 3)
     .option('--no-imagegen', 'Disable AI image generation for missing B-roll assets')
@@ -169,6 +169,7 @@ addCommonOptions(
       height: options.height,
       useImageGen: options.imagegen,
       imageProvider: options.provider,
+      imageModel: options.imageModel,
       imageQuality: options.imageQuality,
       shotsPerSegment: options.shotsPerSegment,
       audioPath: voiceover.outputPath,
@@ -237,6 +238,7 @@ addCommonOptions(
       height: options.height,
       useImageGen: options.imagegen,
       imageProvider: options.provider,
+      imageModel: options.imageModel,
       imageQuality: options.imageQuality,
       shotsPerSegment: options.shotsPerSegment,
       audioPath: paths.audioPath,

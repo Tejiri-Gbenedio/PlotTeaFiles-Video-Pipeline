@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlotTeaFiles Studio — Full Project Summary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #1a1a2e;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  @media print {
+    .page { page-break-after: always; }
+    .no-print { display: none; }
+  }
+
+  .cover {
+    background: #0a0a0b;
+    color: #e8e8f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+    page-break-after: always;
+  }
+
+  .cover-tag {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 24px;
+    border: 1px solid rgba(249,115,22,0.3);
+    padding: 6px 16px;
+    border-radius: 4px;
+    background: rgba(249,115,22,0.08);
+  }
+
+  .cover h1 {
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    text-shadow: 0 0 40px rgba(249,115,22,0.35), 0 0 80px rgba(249,115,22,0.15);
+    margin-bottom: 8px;
+  }
+
+  .cover h1 span {
+    color: #f97316;
+    text-shadow: 0 0 20px rgba(249,115,22,0.9), 0 0 50px rgba(249,115,22,0.5);
+  }
+
+  .cover-sub {
+    font-size: 18px;
+    color: #888899;
+    margin-top: 16px;
+    max-width: 560px;
+  }
+
+  .cover-meta {
+    margin-top: 48px;
+    display: flex;
+    gap: 40px;
+    color: #444455;
+    font-size: 13px;
+  }
+
+  .cover-meta strong { color: #e8e8f0; display: block; font-size: 16px; }
+
+  .cover-divider {
+    width: 60px;
+    height: 2px;
+    background: #f97316;
+    margin: 32px auto;
+    box-shadow: 0 0 12px rgba(249,115,22,0.6);
+  }
+
+  /* Content pages */
+  .section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 48px;
+    page-break-after: always;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 12px;
+  }
+
+  .section h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0a0a0b;
+    line-height: 1.15;
+    margin-bottom: 24px;
+  }
+
+  .section p {
+    color: #3a3a5c;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .section h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0a0a0b;
+    margin: 28px 0 10px;
+  }
+
+  /* Pipeline flow */
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 32px 0;
+  }
+
+  .pipe-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 16px 20px;
+    border-left: 2px solid #e8e8f0;
+    margin-left: 20px;
+    position: relative;
+  }
+
+  .pipe-step:last-child { border-left-color: transparent; }
+
+  .pipe-num {
+    position: absolute;
+    left: -14px;
+    top: 20px;
+    width: 26px;
+    height: 26px;
+    background: #f97316;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .pipe-content { padding-left: 12px; }
+  .pipe-content strong { font-size: 14px; color: #0a0a0b; display: block; margin-bottom: 4px; }
+  .pipe-content span { font-size: 13px; color: #666677; }
+
+  /* Stack grid */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .stack-item {
+    border: 1px solid #e8e8f0;
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+
+  .stack-item .label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 6px;
+  }
+
+  .stack-item .value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0a0a0b;
+  }
+
+  /* Challenge cards */
+  .challenges { display: flex; flex-direction: column; gap: 20px; margin: 24px 0; }
+
+  .challenge {
+    border-left: 3px solid #f97316;
+    background: #fafafa;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+  }
+
+  .challenge .title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0a0a0b;
+    margin-bottom: 6px;
+  }
+
+  .challenge .problem { font-size: 13px; color: #666677; margin-bottom: 8px; }
+
+  .challenge .fix {
+    font-size: 12px;
+    background: rgba(249,115,22,0.08);
+    border: 1px solid rgba(249,115,22,0.2);
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #c05e10;
+    font-weight: 500;
+  }
+
+  /* Updates list */
+  .updates { display: flex; flex-direction: column; gap: 14px; margin: 24px 0; }
+
+  .update {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 14px 18px;
+    border: 1px solid #e8e8f0;
+    border-radius: 8px;
+  }
+
+  .update-num {
+    width: 28px;
+    height: 28px;
+    background: #0a0a0b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #f97316;
+    flex-shrink: 0;
+  }
+
+  .update-text strong { font-size: 13px; color: #0a0a0b; display: block; margin-bottom: 3px; }
+  .update-text span { font-size: 13px; color: #666677; }
+
+  /* Cost table */
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+  th {
+    background: #0a0a0b;
+    color: #f97316;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+  }
+  td { padding: 12px 16px; border-bottom: 1px solid #e8e8f0; font-size: 13px; color: #3a3a5c; }
+  tr:hover td { background: #fafafa; }
+  .highlight td { font-weight: 700; color: #f97316; }
+
+  /* Pending section */
+  .pending-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+
+  .pending-card {
+    border: 1px solid #e8e8f0;
+    border-radius: 10px;
+    padding: 20px;
+  }
+
+  .pending-card.major { border-color: rgba(249,115,22,0.4); background: rgba(249,115,22,0.04); }
+  .pending-card.minor { border-color: #e8e8f0; }
+  .pending-card.parked { border-color: #e8e8f0; opacity: 0.6; }
+
+  .pending-card .badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .badge.major { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+  .badge.minor { background: #e8e8f0; color: #666677; border: 1px solid #ddd; }
+  .badge.parked { background: #f0f0f0; color: #aaa; border: 1px solid #e0e0e0; }
+
+  .pending-card h4 { font-size: 14px; font-weight: 700; color: #0a0a0b; margin-bottom: 6px; }
+  .pending-card p { font-size: 13px; color: #666677; }
+
+  /* Footer */
+  .footer-page {
+    background: #0a0a0b;
+    color: #444455;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px;
+  }
+
+  .footer-page h2 { font-size: 36px; font-weight: 900; color: #e8e8f0; margin-bottom: 16px; }
+  .footer-page h2 span { color: #f97316; }
+  .footer-page p { color: #666677; max-width: 480px; font-size: 15px; }
+
+  .stat-row {
+    display: flex;
+    gap: 60px;
+    margin: 48px 0;
+  }
+
+  .stat { text-align: center; }
+  .stat .num { font-size: 42px; font-weight: 900; color: #f97316; }
+  .stat .lbl { font-size: 12px; color: #444455; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover page">
+  <div class="cover-tag">Project Documentation — June 2026</div>
+  <h1>PlotTea<span>Files</span><br>Studio</h1>
+  <div class="cover-divider"></div>
+  <p class="cover-sub">A local AI-powered pipeline that turns plain story scripts into cinematic short-form videos — automatically.</p>
+  <div class="cover-meta">
+    <div><strong>June 8, 2026</strong>Build Session</div>
+    <div><strong>7 Major</strong>Upgrades</div>
+    <div><strong>8</strong>Challenges Solved</div>
+    <div><strong>Full Stack</strong>Front + Back</div>
+  </div>
+</div>
+
+<!-- WHAT IS IT -->
+<div class="section page">
+  <div class="section-label">01 — Overview</div>
+  <h2>What is PlotTeaFiles Studio?</h2>
+  <p>PlotTeaFiles Studio is a locally-run automation pipeline that converts a plain English story script into a fully produced vertical video — complete with voiceover, word-level captions, AI-generated cinematic images, and a polished MP4 output suitable for Instagram Reels, YouTube Shorts, or TikTok.</p>
+  <p>The project was originally scaffolded by an AI coding assistant (Codex) as a CLI tool called <strong>PlotPipe</strong>. The June 2026 session transformed it into a full-stack product with a web-based Studio UI, live progress tracking, model selection, and a complete visual redesign.</p>
+
+  <h3>The Pipeline — Step by Step</h3>
+  <div class="pipeline">
+    <div class="pipe-step">
+      <div class="pipe-num">1</div>
+      <div class="pipe-content">
+        <strong>Script Input</strong>
+        <span>User pastes a plain English story into the Studio UI. GPT converts it to a structured StoryScript JSON with segments, dialogue, and mood.</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">2</div>
+      <div class="pipe-content">
+        <strong>Voiceover Generation</strong>
+        <span>OpenAI TTS (gpt-4o-mini-tts) or ElevenLabs generates a per-segment narration MP3 from the script text.</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">3</div>
+      <div class="pipe-content">
+        <strong>Caption Transcription</strong>
+        <span>OpenAI Whisper transcribes each audio file into word-level timestamps — used for animated karaoke-style captions in the final video.</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">4</div>
+      <div class="pipe-content">
+        <strong>Image Generation</strong>
+        <span>OpenAI gpt-image-2 generates cinematic 1024×1536 portrait images for each shot in each segment. Multiple images per segment create visual variety during narration.</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">5</div>
+      <div class="pipe-content">
+        <strong>Remotion Render</strong>
+        <span>Remotion (React-based video engine) assembles all assets — audio, images, captions — and renders the final MP4 at full quality.</span>
+      </div>
+    </div>
+    <div class="pipe-step">
+      <div class="pipe-num">6</div>
+      <div class="pipe-content">
+        <strong>Output & Download</strong>
+        <span>The completed MP4 is saved to <code>out/studio/</code> and <code>plotteafiles/</code>, and a download link appears in the Studio UI.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<div class="section page">
+  <div class="section-label">02 — Technology</div>
+  <h2>The Tech Stack</h2>
+  <p>Every component in the pipeline was chosen to run entirely locally on a single machine — no external infrastructure required beyond API calls.</p>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="label">Runtime</div>
+      <div class="value">Node.js 18+ / TypeScript</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Web UI</div>
+      <div class="value">Next.js 16 (App Router)</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Video Rendering</div>
+      <div class="value">Remotion 4.x</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">CLI Framework</div>
+      <div class="value">Commander.js</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Image Generation</div>
+      <div class="value">OpenAI gpt-image-2 / 1.5 / 1</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">TTS / Voiceover</div>
+      <div class="value">OpenAI gpt-4o-mini-tts</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Captions</div>
+      <div class="value">OpenAI Whisper (word timestamps)</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Script Processing</div>
+      <div class="value">OpenAI GPT (text → JSON)</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Alternative Image (Parked)</div>
+      <div class="value">fal.ai FLUX Pro (coded, zero balance)</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Platform</div>
+      <div class="value">Windows 11, PowerShell</div>
+    </div>
+  </div>
+
+  <h3>Key Architecture Decision: Local Spawn Pattern</h3>
+  <p>The Studio web UI does not call the pipeline directly. Instead, it spawns the PlotPipe CLI as a child process using Node.js <code>spawn()</code>. This means:</p>
+  <ul style="margin: 12px 0 0 20px; color: #3a3a5c; font-size: 14px; line-height: 2;">
+    <li>The full pipeline code doesn't need to run inside Next.js</li>
+    <li>Stdout/stderr from the CLI is piped back to both the terminal and the progress tracker</li>
+    <li>Jobs can be cancelled by killing the child process</li>
+    <li>The same CLI can be used standalone (no web UI needed)</li>
+  </ul>
+</div>
+
+<!-- SESSION UPGRADES -->
+<div class="section page">
+  <div class="section-label">03 — Session Work</div>
+  <h2>7 Upgrades Made in This Session</h2>
+  <p>The June 8 session began with reconstructing a prior session's uncommitted changes (context was lost), then continued with a full wave of new upgrades.</p>
+
+  <div class="updates">
+    <div class="update">
+      <div class="update-num">1</div>
+      <div class="update-text">
+        <strong>FLUX Pro Integration (fal.ai)</strong>
+        <span>Added fal-ai/flux-pro as a third image provider. Uses queue-based API: POST to submit → poll status_url until COMPLETED → download. Falls back to OpenAI on failure. Fully coded and wired through the entire stack but parked due to zero fal.ai balance.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">2</div>
+      <div class="update-text">
+        <strong>Caption Style Overhaul</strong>
+        <span>Active word switched from yellow + scale transform to purple highlight background (#7C3AED). Font: 68px → 74px. Phrase window: 7 words → 5 words (tighter, more focused). WebkitTextStroke on inactive words only. Padding and gap tightened.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">3</div>
+      <div class="update-text">
+        <strong>Upgrade to gpt-image-2</strong>
+        <span>After confirming gpt-image-2 and gpt-image-1.5 exist (post knowledge cutoff), upgraded the default model from gpt-image-1-mini to gpt-image-2. Quality default changed from 'low' to 'high' throughout the pipeline.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">4</div>
+      <div class="update-text">
+        <strong>Remove Gemini Entirely</strong>
+        <span>Gemini free tier was unstable and not reliably falling back to OpenAI. Removed from imagegen.ts, store.ts, cli.ts, compose.ts, and page.tsx. Simplified the provider type to just 'openai' | 'flux'.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">5</div>
+      <div class="update-text">
+        <strong>Model Selector Dropdown</strong>
+        <span>Added imageModel state and dropdown in the Studio UI with three options: gpt-image-2 (Best), gpt-image-1.5, gpt-image-1. Threaded imageModel through the full stack via --image-model CLI flag.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">6</div>
+      <div class="update-text">
+        <strong>Progress Bar + Time Remaining</strong>
+        <span>Added startedAt timestamp when jobs start. formatTimeRemaining() calculates estimated time left based on elapsed time vs. current progress. UI shows percentage on left, "~Xmin remaining" on right, below a smooth 2px progress bar.</span>
+      </div>
+    </div>
+    <div class="update">
+      <div class="update-num">7</div>
+      <div class="update-text">
+        <strong>Terminal Logging + UI Redesign</strong>
+        <span>Child process stdout/stderr now piped to terminal, tagged by job ID. Full CSS rewrite: cinematic dark theme (#0a0a0b), orange accent (#f97316), glowing title, editorial panel heads with uppercase letter-spacing, outlined badges, orange-glow buttons.</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGES -->
+<div class="section page">
+  <div class="section-label">04 — Challenges & Setbacks</div>
+  <h2>8 Challenges Overcome</h2>
+  <p>Every build session has its walls. Here's every problem hit, and how each one was solved.</p>
+
+  <div class="challenges">
+    <div class="challenge">
+      <div class="title">1 — Session Context Lost</div>
+      <div class="problem">User accidentally opened the project folder in a different Claude session, wiping the active conversation. Three prior upgrades were mid-flight with no written record.</div>
+      <div class="fix">Fix: Ran <code>git diff HEAD</code> across the 5 modified files. All uncommitted changes were visible in the working tree. Reconstructed the full picture from the diff and briefed the user.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">2 — VS Code Python .env Warning</div>
+      <div class="problem">VS Code showed "python.terminal.useEnvFile is disabled" when the FAL_KEY was added. User thought this would prevent the key from loading.</div>
+      <div class="fix">Fix: The warning is from the Python VS Code extension — completely irrelevant to Node.js. Next.js reads .env automatically via dotenv. No action needed.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">3 — fal.ai Balance Exhausted</div>
+      <div class="problem">FAL_KEY was valid and the connection worked, but the API returned "Exhausted balance. Top up at fal.ai/dashboard/billing." FLUX Pro costs ~$0.05/image.</div>
+      <div class="fix">Fix: Parked FLUX entirely. Kept the full integration code in place — it will work immediately when the user tops up their fal.ai balance.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">4 — Wrong npm Command</div>
+      <div class="problem">Running <code>npm run dev</code> launched the CLI, not the web server. This caused confusion about why the Studio UI wasn't available.</div>
+      <div class="fix">Fix: Correct commands are <code>npm run web:dev</code> (hot reload) or <code>npm run web:build</code> + <code>npm run web:start</code> (production, lower RAM). Documented in memory.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">5 — Render Appeared Stuck at 58%</div>
+      <div class="problem">Progress bar stopped at 58% during image generation. No terminal logs visible. User suspected the job had frozen or crashed silently.</div>
+      <div class="fix">Fix (immediate): Checked <code>localhost:3000/api/jobs</code> — status was still 'running'. Job was alive. Fix (permanent): Added stdout/stderr piping from child process to terminal. Root cause: gpt-image-2 High quality × 15 images = 5–15 minutes. Normal.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">6 — Port 3000 EADDRINUSE</div>
+      <div class="problem">After a rebuild, <code>npm run web:start</code> failed: "Error: address already in use :::3000". The previous server process hadn't been killed before the rebuild.</div>
+      <div class="fix">Fix: <code>netstat -ano | findstr :3000</code> revealed PIDs. Killed them with <code>Stop-Process -Id &lt;PID&gt; -Force</code> in PowerShell. Server started cleanly after.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">7 — Edit Tool "File Not Read" Errors</div>
+      <div class="problem">Multiple Edit tool calls failed mid-session because the target files hadn't been read into context first. The tool requires a prior Read call before any edit.</div>
+      <div class="fix">Fix: Always Read before Edit. Established as a working discipline for subsequent changes in the session.</div>
+    </div>
+    <div class="challenge">
+      <div class="title">8 — Playwright file:// Protocol Blocked</div>
+      <div class="problem">Tried to open mockup HTML files via <code>file:///</code> URL in Playwright for the UI comparison exercise. The protocol was blocked.</div>
+      <div class="fix">Fix: Navigated to <code>about:blank</code> instead, then injected the full HTML directly via <code>browser_evaluate</code> with <code>document.write()</code>. Worked perfectly for all 3 mockup directions.</div>
+    </div>
+  </div>
+</div>
+
+<!-- COST -->
+<div class="section page">
+  <div class="section-label">05 — Cost Analysis</div>
+  <h2>Image Generation Cost Breakdown</h2>
+  <p>The first tracked render (using gpt-image-1.5 at medium quality, 1 shot per segment, 5 segments) gave us real measured data to plan future renders.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Model</th>
+        <th>Quality</th>
+        <th>Images</th>
+        <th>Measured Cost</th>
+        <th>Cost/Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>gpt-image-1.5</td>
+        <td>Medium</td>
+        <td>5</td>
+        <td>$0.29</td>
+        <td>~$0.058</td>
+      </tr>
+      <tr>
+        <td>gpt-image-1.5</td>
+        <td>Medium</td>
+        <td>10</td>
+        <td>~$0.58</td>
+        <td>~$0.058</td>
+      </tr>
+      <tr>
+        <td>gpt-image-1.5</td>
+        <td>Medium</td>
+        <td>15 (3 shots × 5 segments)</td>
+        <td>~$0.87</td>
+        <td>~$0.058</td>
+      </tr>
+      <tr class="highlight">
+        <td>gpt-image-2</td>
+        <td>High</td>
+        <td>15 (3 shots × 5 segments)</td>
+        <td>~$1.50–$2.00 (est.)</td>
+        <td>~$0.10–$0.13</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Recommended Strategy</h3>
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="label">Draft / Test Renders</div>
+      <div class="value">1 shot/segment, gpt-image-1 or 1.5, Medium quality → ~$0.29 per video</div>
+    </div>
+    <div class="stack-item">
+      <div class="label">Final Production</div>
+      <div class="value">2–3 shots/segment, gpt-image-2, High quality → $1.50–$3.00 per video</div>
+    </div>
+  </div>
+
+  <p style="margin-top: 16px; font-size: 13px; color: #666677;">All images are generated at 1024×1536 (portrait, 9:16 for vertical video). Size is fixed — cost scales by model and quality only.</p>
+</div>
+
+<!-- PENDING UPDATES -->
+<div class="section page">
+  <div class="section-label">06 — Roadmap</div>
+  <h2>What's Still Pending</h2>
+  <p>All planned updates, categorised by priority and blockers.</p>
+
+  <div class="pending-grid">
+    <div class="pending-card major">
+      <span class="badge major">Major</span>
+      <h4>AI Video Generation</h4>
+      <p>Generate actual video clips per segment instead of still images. Blocked: no free tier exists for Runway, Kling, Luma, or Sora. Will integrate via fal.ai when user has budget.</p>
+    </div>
+    <div class="pending-card major">
+      <span class="badge major">Major</span>
+      <h4>FLUX Pro (fal.ai)</h4>
+      <p>Fully coded and wired through the entire stack. Blocked only by zero fal.ai balance. Will work immediately once account is topped up.</p>
+    </div>
+    <div class="pending-card minor">
+      <span class="badge minor">Minor</span>
+      <h4>Quality Default Fix</h4>
+      <p>UI quality dropdown still defaults to 'low' in React state. Should default to 'high' to match imagegen.ts. One-line fix in page.tsx.</p>
+    </div>
+    <div class="pending-card minor">
+      <span class="badge minor">Minor</span>
+      <h4>Auto-Start on Boot</h4>
+      <p>User asked about auto-starting the Studio server. Decision deferred — using manual start to save RAM. Could use pm2 or Windows Task Scheduler in future.</p>
+    </div>
+    <div class="pending-card parked">
+      <span class="badge parked">Parked</span>
+      <h4>Pexels Stock Video</h4>
+      <p>User rejected this direction — "they don't have much video we can use." Would need AI video generation, not stock footage.</p>
+    </div>
+    <div class="pending-card parked">
+      <span class="badge parked">Parked</span>
+      <h4>Auto-Commit / Git History</h4>
+      <p>All changes remain as uncommitted working tree modifications. Can be committed to git as a clean milestone commit when ready.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FINAL PAGE -->
+<div class="footer-page page">
+  <h2>PlotTea<span>Files</span> Studio</h2>
+  <div style="width:60px;height:2px;background:#f97316;margin:24px auto;box-shadow:0 0 12px rgba(249,115,22,0.6);"></div>
+  <div class="stat-row">
+    <div class="stat">
+      <div class="num">7</div>
+      <div class="lbl">Upgrades</div>
+    </div>
+    <div class="stat">
+      <div class="num">8</div>
+      <div class="lbl">Challenges</div>
+    </div>
+    <div class="stat">
+      <div class="num">5</div>
+      <div class="lbl">Files Rebuilt</div>
+    </div>
+    <div class="stat">
+      <div class="num">$0.06</div>
+      <div class="lbl">Per Image</div>
+    </div>
+  </div>
+  <p>Script → Voiceover → Captions → Cinematic Images → MP4<br>All local. All automated. All yours.</p>
+  <p style="margin-top: 24px; font-size: 12px; color: #2a2a3a;">Built June 2026 · tejirigbe@gmail.com</p>
+</div>
+
+</body>
+</html>

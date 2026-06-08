@@ -13,8 +13,18 @@ interface StudioJob {
   stage: string;
   progress: number;
   createdAt: string;
+  startedAt?: string;
   outputUrl?: string;
   error?: string;
+}
+
+function formatTimeRemaining(startedAt: string | undefined, progress: number): string | null {
+  if (!startedAt || progress <= 10 || progress >= 100) return null;
+  const elapsed = (Date.now() - new Date(startedAt).getTime()) / 1000;
+  const totalEstimate = elapsed / (progress / 100);
+  const remaining = Math.max(0, totalEstimate - elapsed);
+  if (remaining < 60) return `~${Math.ceil(remaining)}s remaining`;
+  return `~${Math.ceil(remaining / 60)}min remaining`;
 }
 
 const sampleStory = {
@@ -80,6 +90,7 @@ export default function StudioPage() {
   const [tone, setTone] = useState('cinematic suspenseful');
   const [jsonScript, setJsonScript] = useState(() => JSON.stringify(sampleStory, null, 2));
   const [provider, setProvider] = useState('openai');
+  const [imageModel, setImageModel] = useState('gpt-image-2');
   const [quality, setQuality] = useState('low');
   const [shots, setShots] = useState(3);
   const [jobs, setJobs] = useState<StudioJob[]>([]);
@@ -152,6 +163,7 @@ export default function StudioPage() {
           script: story,
           options: {
             provider,
+            imageModel,
             imageQuality: quality,
             shotsPerSegment: shots
           }
@@ -176,7 +188,7 @@ export default function StudioPage() {
       <div className="shell">
         <header className="topbar">
           <div className="brand">
-            <h1>PlotTeaFiles Studio</h1>
+            <h1>PlotTea<span className="brand-accent">Files</span> Studio</h1>
             <span>Paste a story script, generate cinematic Shorts, download the MP4.</span>
           </div>
           <div className="status-pill">
@@ -204,10 +216,11 @@ export default function StudioPage() {
             <div className="panel-body">
               <div className="form-grid">
                 <div className="field">
-                  <label>Image Provider</label>
-                  <select className="select" value={provider} onChange={(event) => setProvider(event.target.value)}>
-                    <option value="openai">OpenAI</option>
-                    <option value="gemini">Gemini with OpenAI fallback</option>
+                  <label>OpenAI Model</label>
+                  <select className="select" value={imageModel} onChange={(event) => setImageModel(event.target.value)}>
+                    <option value="gpt-image-2">gpt-image-2 (Best)</option>
+                    <option value="gpt-image-1.5">gpt-image-1.5</option>
+                    <option value="gpt-image-1">gpt-image-1</option>
                   </select>
                 </div>
                 <div className="field">
@@ -327,8 +340,16 @@ export default function StudioPage() {
                       </div>
                       <span className={`badge ${job.status}`}>{statusLabel(job.status)}</span>
                     </div>
-                    <div className="progress" style={{'--value': `${job.progress}%`} as React.CSSProperties}>
-                      <span />
+                    <div className="progress-wrap">
+                      <div className="progress" style={{'--value': `${job.progress}%`} as React.CSSProperties}>
+                        <span />
+                      </div>
+                      <div className="progress-meta">
+                        <span>{job.progress}%</span>
+                        {job.status === 'running' ? (
+                          <span>{formatTimeRemaining(job.startedAt, job.progress) ?? 'Estimating...'}</span>
+                        ) : null}
+                      </div>
                     </div>
                     {job.error ? <div className="error">{job.error}</div> : null}
                     {job.outputUrl ? (

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PlotTeaFiles Studio — LinkedIn Carousel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #111;
+  }
+
+  @media print {
+    body { background: #000; }
+    .slide { page-break-after: always; }
+    .screen-note { display: none; }
+  }
+
+  .screen-note {
+    background: #fff3cd;
+    color: #856404;
+    text-align: center;
+    padding: 14px;
+    font-size: 13px;
+    font-family: sans-serif;
+    border-bottom: 2px solid #ffc107;
+  }
+
+  /* Each slide: 1080×1080 square */
+  .slide {
+    width: 1080px;
+    height: 1080px;
+    margin: 0 auto 4px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+    background: #0a0a0b;
+  }
+
+  /* Shared corner tag */
+  .slide-num {
+    position: absolute;
+    bottom: 40px;
+    right: 48px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2a2a3a;
+    letter-spacing: 1px;
+  }
+
+  .logo-mark {
+    position: absolute;
+    top: 40px;
+    left: 48px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #2a2a3a;
+  }
+
+  .logo-mark span { color: #f97316; }
+
+  /* Accent bar */
+  .accent-bar {
+    width: 48px;
+    height: 3px;
+    background: #f97316;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    box-shadow: 0 0 14px rgba(249,115,22,0.7);
+  }
+
+  /* ---- SLIDE 1: COVER ---- */
+  .slide-1 {
+    background: #0a0a0b;
+    text-align: center;
+  }
+
+  .slide-1::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(249,115,22,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .slide-1 .tag {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f97316;
+    border: 1px solid rgba(249,115,22,0.3);
+    background: rgba(249,115,22,0.08);
+    padding: 8px 20px;
+    border-radius: 4px;
+    margin-bottom: 40px;
+  }
+
+  .slide-1 h1 {
+    font-size: 82px;
+    font-weight: 900;
+    color: #e8e8f0;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    text-shadow: 0 0 40px rgba(249,115,22,0.3);
+  }
+
+  .slide-1 h1 span {
+    color: #f97316;
+    text-shadow: 0 0 20px rgba(249,115,22,0.9), 0 0 60px rgba(249,115,22,0.4);
+  }
+
+  .slide-1 .sub {
+    font-size: 20px;
+    color: #444455;
+    margin-top: 24px;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+
+  .slide-1 .sub em {
+    color: #888899;
+    font-style: normal;
+  }
+
+  /* ---- SLIDE 2: What is it ---- */
+  .slide-2 { text-align: left; align-items: flex-start; }
+
+  .slide-label {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 16px;
+  }
+
+  .slide h2 {
+    font-size: 52px;
+    font-weight: 900;
+    color: #e8e8f0;
+    line-height: 1.1;
+    margin-bottom: 36px;
+    letter-spacing: -1px;
+  }
+
+  .slide p {
+    font-size: 22px;
+    color: #888899;
+    line-height: 1.65;
+    max-width: 820px;
+  }
+
+  .slide p strong { color: #e8e8f0; font-weight: 600; }
+
+  /* ---- SLIDE 3: Pipeline ---- */
+  .slide-3 { text-align: left; align-items: flex-start; }
+
+  .pipe-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 8px;
+    width: 100%;
+  }
+
+  .pipe-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .pipe-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .pipe-text strong {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8e8f0;
+    display: block;
+  }
+
+  .pipe-text span {
+    font-size: 15px;
+    color: #555566;
+  }
+
+  .pipe-arrow {
+    font-size: 18px;
+    color: #2a2a3a;
+    margin-left: 0;
+  }
+
+  /* ---- SLIDE 4: Stack ---- */
+  .slide-4 { text-align: left; align-items: flex-start; }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+  .tech-chip {
+    border: 1px solid #1e1e24;
+    border-radius: 10px;
+    padding: 18px 20px;
+    background: #0d0d10;
+  }
+
+  .tech-chip .tc-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #f97316;
+    margin-bottom: 8px;
+  }
+
+  .tech-chip .tc-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e8e8f0;
+  }
+
+  /* ---- SLIDE 5: Upgrades ---- */
+  .slide-5 { text-align: left; align-items: flex-start; }
+
+  .upgrade-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .upgrade-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 18px 22px;
+    background: #0d0d10;
+    border: 1px solid #1e1e24;
+    border-radius: 10px;
+  }
+
+  .upgrade-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(249,115,22,0.15);
+    border: 1px solid rgba(249,115,22,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    color: #f97316;
+    flex-shrink: 0;
+  }
+
+  .upgrade-text strong {
+    font-size: 16px;
+    font-weight: 700;
+    color: #e8e8f0;
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .upgrade-text span { font-size: 14px; color: #444455; }
+
+  /* ---- SLIDE 6: Challenges ---- */
+  .slide-6 { text-align: left; align-items: flex-start; }
+
+  .challenge-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .ch-item {
+    border-left: 3px solid #f97316;
+    padding: 14px 20px;
+    background: #0d0d10;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .ch-item .ch-q { font-size: 15px; font-weight: 700; color: #e8e8f0; margin-bottom: 4px; }
+  .ch-item .ch-a { font-size: 13px; color: #444455; }
+
+  /* ---- SLIDE 7: Cost ---- */
+  .slide-7 { text-align: center; }
+
+  .cost-row {
+    display: flex;
+    gap: 28px;
+    margin: 40px 0;
+    justify-content: center;
+  }
+
+  .cost-box {
+    background: #0d0d10;
+    border: 1px solid #1e1e24;
+    border-radius: 14px;
+    padding: 36px 40px;
+    text-align: center;
+    min-width: 200px;
+  }
+
+  .cost-box.highlight-box {
+    border-color: rgba(249,115,22,0.4);
+    background: rgba(249,115,22,0.06);
+  }
+
+  .cost-box .big {
+    font-size: 52px;
+    font-weight: 900;
+    color: #f97316;
+    line-height: 1;
+  }
+
+  .cost-box .desc {
+    font-size: 13px;
+    color: #444455;
+    margin-top: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .cost-note {
+    font-size: 18px;
+    color: #444455;
+    max-width: 700px;
+  }
+
+  /* ---- SLIDE 8: Coming Next ---- */
+  .slide-8 { text-align: left; align-items: flex-start; }
+
+  .next-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .next-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border: 1px solid #1e1e24;
+    border-radius: 10px;
+    background: #0d0d10;
+  }
+
+  .next-item .badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-major { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+  .badge-minor { background: #1e1e24; color: #555566; border: 1px solid #2a2a3a; }
+  .badge-parked { background: #111; color: #333; border: 1px solid #1e1e24; }
+
+  .next-item .ni-text strong { font-size: 16px; color: #e8e8f0; display: block; font-weight: 700; }
+  .next-item .ni-text span { font-size: 14px; color: #444455; }
+
+  /* ---- SLIDE 9: CTA ---- */
+  .slide-9 { text-align: center; }
+
+  .slide-9::before {
+    content: '';
+    position: absolute;
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(249,115,22,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .slide-9 h2 {
+    font-size: 60px;
+    font-weight: 900;
+    color: #e8e8f0;
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 24px;
+  }
+
+  .slide-9 h2 span { color: #f97316; }
+
+  .slide-9 .tagline {
+    font-size: 22px;
+    color: #555566;
+    max-width: 640px;
+    line-height: 1.5;
+    margin-bottom: 48px;
+  }
+
+  .pill {
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.3);
+    color: #f97316;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 32px;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen-note">
+  <strong>Print Instructions:</strong> Open in Chrome → File → Print → "Save as PDF" → Paper size: Custom 1080×1080px OR use A4 with "Fit to page". Each slide = one PDF page. Then upload as a LinkedIn Document/Carousel post.
+</div>
+
+<!-- SLIDE 1: Cover -->
+<div class="slide slide-1">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="tag">Building in Public — June 2026</div>
+  <h1>I built an AI<br>video factory<br>on my <span>laptop.</span></h1>
+  <p class="sub">Script → Voiceover → Captions → Cinematic Images → MP4<br><em>Fully automated. All local. All mine.</em></p>
+  <div class="slide-num">1 / 9</div>
+</div>
+
+<!-- SLIDE 2: What is it -->
+<div class="slide slide-2">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">The Concept</div>
+  <h2>What is<br>PlotTeaFiles<br>Studio?</h2>
+  <p>A <strong>local AI pipeline</strong> that turns a plain story script into a <strong>fully produced short-form video</strong> — with voiceover, captions, and cinematic images — in one click. No team. No expensive subscription. Just a script and an API key.</p>
+  <div class="slide-num">2 / 9</div>
+</div>
+
+<!-- SLIDE 3: Pipeline -->
+<div class="slide slide-3">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">The Pipeline</div>
+  <h2>6 Steps.<br>Fully Automated.</h2>
+  <div class="pipe-list">
+    <div class="pipe-item">
+      <div class="pipe-icon">📝</div>
+      <div class="pipe-text"><strong>Script Input</strong><span>Paste your story → GPT converts it to structured JSON</span></div>
+    </div>
+    <div class="pipe-item">
+      <div class="pipe-icon">🎙️</div>
+      <div class="pipe-text"><strong>Voiceover</strong><span>OpenAI TTS narrates each segment</span></div>
+    </div>
+    <div class="pipe-item">
+      <div class="pipe-icon">💬</div>
+      <div class="pipe-text"><strong>Captions</strong><span>Whisper transcribes → word-level karaoke captions</span></div>
+    </div>
+    <div class="pipe-item">
+      <div class="pipe-icon">🖼️</div>
+      <div class="pipe-text"><strong>AI Images</strong><span>gpt-image-2 generates cinematic 9:16 visuals</span></div>
+    </div>
+    <div class="pipe-item">
+      <div class="pipe-icon">🎬</div>
+      <div class="pipe-text"><strong>Remotion Render</strong><span>React-based engine assembles → exports MP4</span></div>
+    </div>
+    <div class="pipe-item">
+      <div class="pipe-icon">📲</div>
+      <div class="pipe-text"><strong>Download Ready</strong><span>MP4 saved locally, ready for upload</span></div>
+    </div>
+  </div>
+  <div class="slide-num">3 / 9</div>
+</div>
+
+<!-- SLIDE 4: Stack -->
+<div class="slide slide-4">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">The Tech Stack</div>
+  <h2>Everything<br>Stitched Together.</h2>
+  <div class="tech-grid">
+    <div class="tech-chip">
+      <div class="tc-label">Web UI</div>
+      <div class="tc-val">Next.js 16</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Video Engine</div>
+      <div class="tc-val">Remotion 4.x</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Images</div>
+      <div class="tc-val">gpt-image-2</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Voiceover</div>
+      <div class="tc-val">OpenAI TTS</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Captions</div>
+      <div class="tc-val">Whisper API</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Script AI</div>
+      <div class="tc-val">GPT-4o</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">CLI</div>
+      <div class="tc-val">Commander.js</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Language</div>
+      <div class="tc-val">TypeScript</div>
+    </div>
+    <div class="tech-chip">
+      <div class="tc-label">Platform</div>
+      <div class="tc-val">Windows 11</div>
+    </div>
+  </div>
+  <div class="slide-num">4 / 9</div>
+</div>
+
+<!-- SLIDE 5: Upgrades -->
+<div class="slide slide-5">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">Session Upgrades</div>
+  <h2>7 Things We<br>Built in One Day.</h2>
+  <div class="upgrade-list">
+    <div class="upgrade-item">
+      <div class="upgrade-num">1</div>
+      <div class="upgrade-text"><strong>gpt-image-2 Integration</strong><span>Upgraded from old model — better quality, High as default</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">2</div>
+      <div class="upgrade-text"><strong>Remove Gemini</strong><span>Free tier too unstable — OpenAI only from now on</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">3</div>
+      <div class="upgrade-text"><strong>Model Selector</strong><span>UI dropdown: gpt-image-2, 1.5, 1 — threaded full stack</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">4</div>
+      <div class="upgrade-text"><strong>Progress % + Time Remaining</strong><span>Live countdown on every job card</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">5</div>
+      <div class="upgrade-text"><strong>Terminal Log Piping</strong><span>Child process output now visible in real-time</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">6</div>
+      <div class="upgrade-text"><strong>Caption Overhaul</strong><span>Purple word highlight, 74px font, tighter phrase window</span></div>
+    </div>
+    <div class="upgrade-item">
+      <div class="upgrade-num">7</div>
+      <div class="upgrade-text"><strong>Full UI Redesign</strong><span>Cinematic dark theme — orange accent, editorial panels</span></div>
+    </div>
+  </div>
+  <div class="slide-num">5 / 9</div>
+</div>
+
+<!-- SLIDE 6: Challenges -->
+<div class="slide slide-6">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">Real Talk</div>
+  <h2>The Walls We<br>Hit (and Broke).</h2>
+  <div class="challenge-list">
+    <div class="ch-item">
+      <div class="ch-q">Session context wiped mid-build</div>
+      <div class="ch-a">Ran git diff HEAD — all 3 upgrades recovered from uncommitted working tree changes</div>
+    </div>
+    <div class="ch-item">
+      <div class="ch-q">Render stuck at 58% — no logs</div>
+      <div class="ch-a">Checked /api/jobs directly. Job alive. Fixed by piping child stdout to terminal</div>
+    </div>
+    <div class="ch-item">
+      <div class="ch-q">fal.ai balance exhausted</div>
+      <div class="ch-a">FLUX fully coded — parked until funded. Fell back to OpenAI only</div>
+    </div>
+    <div class="ch-item">
+      <div class="ch-q">Port 3000 EADDRINUSE</div>
+      <div class="ch-a">netstat found the stale PID. Killed with Stop-Process. Server back in 10 seconds</div>
+    </div>
+    <div class="ch-item">
+      <div class="ch-q">Gemini free tier unreliable</div>
+      <div class="ch-a">Not falling back to OpenAI as expected. Removed entirely — simplified the whole stack</div>
+    </div>
+  </div>
+  <div class="slide-num">6 / 9</div>
+</div>
+
+<!-- SLIDE 7: Cost -->
+<div class="slide slide-7">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="accent-bar"></div>
+  <div class="slide-label">The Cost</div>
+  <h2 style="color:#e8e8f0; font-size:52px; font-weight:900; letter-spacing:-1px; margin-bottom:12px;">How much does<br>one video cost?</h2>
+  <div class="cost-row">
+    <div class="cost-box highlight-box">
+      <div class="big">$0.06</div>
+      <div class="desc">per image<br>gpt-image-1.5 medium</div>
+    </div>
+    <div class="cost-box">
+      <div class="big">$0.29</div>
+      <div class="desc">draft video<br>5 images, 1 shot/segment</div>
+    </div>
+    <div class="cost-box">
+      <div class="big">~$2</div>
+      <div class="desc">final quality<br>gpt-image-2 high, 15 images</div>
+    </div>
+  </div>
+  <p class="cost-note">Use 1 shot/segment for testing. 2–3 shots for final. You control the cost — down to the model and quality level.</p>
+  <div class="slide-num">7 / 9</div>
+</div>
+
+<!-- SLIDE 8: What's Next -->
+<div class="slide slide-8">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="slide-label">The Roadmap</div>
+  <h2>What's<br>Coming Next.</h2>
+  <div class="next-list">
+    <div class="next-item">
+      <span class="badge badge-major">Major</span>
+      <div class="ni-text"><strong>AI Video Generation</strong><span>Real video clips per segment, not just stills — when budget allows</span></div>
+    </div>
+    <div class="next-item">
+      <span class="badge badge-major">Major</span>
+      <div class="ni-text"><strong>FLUX Pro (fal.ai)</strong><span>Fully coded, wired through full stack — blocked by $0 balance only</span></div>
+    </div>
+    <div class="next-item">
+      <span class="badge badge-minor">Minor</span>
+      <div class="ni-text"><strong>Quality Default Fix</strong><span>One-line change — UI default to 'high' to match backend</span></div>
+    </div>
+    <div class="next-item">
+      <span class="badge badge-minor">Minor</span>
+      <div class="ni-text"><strong>Auto-Start on Boot</strong><span>pm2 or Windows Task Scheduler — deferred to save RAM for now</span></div>
+    </div>
+    <div class="next-item">
+      <span class="badge badge-parked">Parked</span>
+      <div class="ni-text"><strong>Stock Video (Pexels)</strong><span>Rejected — not enough usable content. Need AI video gen instead</span></div>
+    </div>
+  </div>
+  <div class="slide-num">8 / 9</div>
+</div>
+
+<!-- SLIDE 9: CTA -->
+<div class="slide slide-9">
+  <div class="logo-mark">Plot<span>Tea</span>Files</div>
+  <div class="accent-bar"></div>
+  <h2>Script → Video.<br><span>One Click.</span></h2>
+  <p class="tagline">Built from scratch. Rebuilt twice. Every wall knocked down. This is what building in public actually looks like.</p>
+  <div class="pill">PlotTeaFiles Studio — June 2026</div>
+  <div class="slide-num">9 / 9</div>
+</div>
+
+</body>
+</html>
